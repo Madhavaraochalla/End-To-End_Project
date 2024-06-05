@@ -1,0 +1,62 @@
+pipeline
+  {
+    agent any
+    stages
+    {   
+      stages('Continous Download')
+      {
+       steps
+       {
+         git 'https://github.com/Madhavaraochalla/Jenkins-pipeline-code.git'
+       }
+      }
+      stage ('Continous Build')
+      {
+        steps
+        {
+          sh 'mvn package'
+        }
+      }
+      stage('Creating Docker IMAGE')
+      {
+       steps
+       {
+         sh'cp webapp/target/webapp.war . '
+
+          FROM tomee
+          MAINTAINER Madhav
+          COPY webapp/target/webapp.war
+          sh ' docker build -t madhavaraochalla/app . '
+       }
+      }
+      stage ('Push Docker image into Docker-Hub')
+      {
+        steps
+       {
+        sh 'docker push madhavaraochalla/app' 
+       }
+      }
+      stage('Deploy Appilication inti QA environment')
+      {
+       steps
+       {
+        sh 'ssh ubuntu@172.31.14.137 ansible-playbook /home/ubuntu/playbook2.yml -b
+       }
+      }
+      stage('Download and run selinum Scripts')
+      {
+       steps
+       {
+         git 'https://github.com/Madhavaraochalla/Testing-code.git'
+         sh 'java -jar /var/lib/jenkins/workspace/jenkins-project/testing.jar'
+       }
+      }
+      stage('Deploy into Production environment')
+      {
+       steps
+       {
+         sh 'ssh ec2@172.31.14.137 kubectl apply -f /home/ec2-user/app.yml'
+       }
+      }
+    }
+  }

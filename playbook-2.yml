@@ -1,0 +1,17 @@
+---
+# creating container out of docker image in all Ansible/QA hosts
+name: creating container from custimised docker image in all hosts
+hosts: all
+tasks: 
+  - name: create container
+    docker_container:
+       name: app
+       image: madhavaraochalla/app
+       ports:
+         - 8080:8080
+...
+
+
+
+# To run this playbook
+# ansible-playbook playbook-2.yml -b

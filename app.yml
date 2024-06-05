@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels: 
+     author: Madhav
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      author: Madhav
+  template:
+    metadata:
+      name: my-app
+      labels: 
+         author: Madhav
+    spec:
+      containers:
+      - name: myapp
+        image: madhavaraochalla/app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-Service
+  labels: 
+      author: Madhav
+spec:
+  selector:
+    author: Madhav
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30008
+... 

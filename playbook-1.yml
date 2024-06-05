@@ -1,0 +1,21 @@
+---
+# installing required softwares
+name: Install docker and required softwares
+hosts: all
+tasks:
+   - name: install python pip
+     state: present
+     update_cache: yes
+# docker installing
+   - name: Download docker script and install 
+     shell: "{{item}}"
+     with_items:
+     - curl -fsSL https://get.docker.com -o install-docker.sh
+     - sudo sh install-docker.sh
+     - pip3 install docker-py
+...
+
+
+
+# to run this playbook
+# ansible-playbook playbook-1.yml -b
